@@ -1,0 +1,38 @@
+version: "3.6"
+
+services:
+  pinpoint-hbase:
+    container_name: "pinpoint-hbase"
+    image: "zyz/pinpoint-hbase:1.8.4"
+    networks:
+      - pinpoint
+    ports:
+      - "16010:16010"
+
+  pinpoint-web:
+    container_name: "pinpoint-web"
+    image: "zyz/pinpoint-web:1.8.4"
+    depends_on:
+      - pinpoint-hbase
+    ports:
+      - "8080:8080"
+    networks:
+      - pinpoint
+
+  pinpoint-collector:
+    container_name: "pinpoint-collector"
+    image: "zyz/pinpoint-collector:1.8.4"
+    depends_on:
+      - pinpoint-hbase
+    ports:
+      - "9994:9994"
+      - "9995:9995/tcp"
+      - "9996:9996/tcp"
+      - "9995:9995/udp"
+      - "9996:9996/udp"
+    networks:
+      - pinpoint
+
+networks:
+  pinpoint:
+    driver: bridge
